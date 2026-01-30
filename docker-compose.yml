@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: mini-service-desk
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    command: >
+      bash -c "
+      if [ ! -f composer.json ]; then
+        echo '🚀 Criando novo projeto Laravel...'
+        composer create-project laravel/laravel:^11.0 temp-laravel
+        shopt -s dotglob
+        mv temp-laravel/* .
+        rm -rf temp-laravel
+      fi
+
+      echo '📦 Instalando dependências...'
+      composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      if [ ! -f .env ]; then
+        echo '⚙️  Configurando ambiente...'
+        cp .env.example .env
+        php artisan key:generate --no-interaction
+      fi
+
+      echo '🗄️  Criando banco de dados...'
+      touch database/database.sqlite
+
+      echo '🔗 Criando link simbólico para storage...'
+      php artisan storage:link --force || true
+
+      echo '✅ Iniciando servidor...'
+      php artisan serve --host=0.0.0.0 --port=8000
+      "
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
