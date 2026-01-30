@@ -29,6 +29,10 @@ fi
 echo "🔗 Criando link simbólico para storage..."
 php artisan storage:link --force 2>/dev/null || true
 
+# Executar migrations
+echo "🔄 Executando migrations do banco de dados..."
+php artisan migrate --force
+
 # Iniciar servidor Laravel
 echo "✅ Iniciando servidor Laravel..."
 echo "🌐 Servidor disponível em http://localhost:8000"
