@@ -1,66 +1,447 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Mini Service Desk - Sistema de Abertura de Chamados
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema web para abertura e gerenciamento de chamados com integração automática ao Trello.
 
-## About Laravel
+## Índice
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Funcionalidades](#funcionalidades)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação e Configuração](#instalação-e-configuração)
+- [Uso](#uso)
+- [API](#api)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Decisões Técnicas](#decisões-técnicas)
+- [Testes](#testes)
+- [Troubleshooting](#troubleshooting)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Sobre o Projeto
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Mini Service Desk é uma aplicação web que permite que colaboradores de uma empresa abram chamados de suporte de forma simples e rápida. Todos os chamados são automaticamente criados como cards no Trello, organizados por tipo e prioridade.
 
-## Learning Laravel
+## Funcionalidades
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### MVP Obrigatório
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- ✅ Formulário de abertura de chamado com validações
+- ✅ Integração completa com API do Trello
+- ✅ Criação automática de cards no board especificado
+- ✅ Upload de múltiplos anexos (até 3 arquivos, 10MB cada)
+- ✅ Categorização automática por labels (tipo e prioridade)
+- ✅ Listagem de chamados recentes
+- ✅ Rate limiting (10 requisições por minuto)
+- ✅ Feedback visual com notificações
+- ✅ Link direto para o card criado no Trello
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Campos do Formulário
 
-## Laravel Sponsors
+**Obrigatórios:**
+- Tipo de Suporte (Bug, Melhoria, Dúvida/Operação, Acesso/Permissão, Infra/DevOps)
+- Título do Chamado (5-120 caracteres)
+- Descrição Detalhada (mínimo 10 caracteres)
+- Nome do Solicitante
+- E-mail do Solicitante
+- Prioridade (Baixa, Média, Alta)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+**Opcionais:**
+- Sistema/Produto Afetado
+- Ambiente (Produção, Homologação, Dev)
+- Anexos (PNG, JPG, PDF, DOC, DOCX, TXT)
 
-### Premium Partners
+## Tecnologias Utilizadas
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Backend
+- **Laravel 11** - Framework PHP
+- **PHP 8.3** - Linguagem de programação
+- **SQLite** - Banco de dados (não usado para persistência)
+- **Guzzle HTTP** - Cliente HTTP para integração Trello
 
-## Contributing
+### Frontend
+- **Tailwind CSS** - Framework CSS utility-first
+- **Alpine.js** - Framework JavaScript reativo
+- **Blade** - Template engine do Laravel
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Infraestrutura
+- **Docker** - Containerização
+- **Docker Compose** - Orquestração de containers
 
-## Code of Conduct
+### Integração
+- **Trello REST API** - Gerenciamento de cards e boards
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Pré-requisitos
 
-## Security Vulnerabilities
+- Docker (versão 20.10 ou superior)
+- Docker Compose (versão 2.0 ou superior)
+- Conta no Trello com API Key e Token
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Instalação e Configuração
 
-## License
+### 1. Clonar o Repositório
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+git clone <url-do-repositorio>
+cd desafio-mini-service
+```
+
+### 2. Configurar o Trello
+
+Antes de iniciar a aplicação, você precisa:
+
+1. Acessar sua conta no Trello
+2. Obter sua API Key em: https://trello.com/app-key
+3. Gerar um Token clicando no link "Token" na mesma página
+4. Criar um board no Trello (ou usar um existente)
+5. (Opcional) Criar listas personalizadas: "Aberto", "Em Execução", "Finalizado"
+
+### 3. Configurar Credenciais
+
+As credenciais já estão pré-configuradas no arquivo `.env.example` do projeto para o board de teste. Para usar seu próprio board, edite o arquivo antes de iniciar:
+
+```env
+TRELLO_API_KEY=sua_api_key_aqui
+TRELLO_TOKEN=seu_token_aqui
+TRELLO_BOARD_ID=id_do_seu_board
+TRELLO_BOARD_URL=https://trello.com/b/seu_board_id/nome
+```
+
+**Como encontrar o Board ID:**
+1. Abra seu board no Trello
+2. Na URL, o ID está após `/b/`: `trello.com/b/[BOARD_ID]/nome-do-board`
+
+### 4. Iniciar a Aplicação
+
+```bash
+docker-compose up -d
+```
+
+O comando acima irá:
+- Construir a imagem Docker com PHP 8.3 e todas as extensões necessárias
+- Instalar o Laravel e todas as dependências
+- Configurar o ambiente automaticamente
+- Iniciar o servidor na porta 8000
+
+### 5. Acessar a Aplicação
+
+Abra seu navegador em:
+```
+http://localhost:8000
+```
+
+## Uso
+
+### Interface Web
+
+1. Acesse `http://localhost:8000`
+2. Preencha o formulário com as informações do chamado
+3. (Opcional) Anexe arquivos relevantes
+4. Clique em "Abrir Chamado"
+5. Você será redirecionado automaticamente para o card no Trello
+
+### Visualizar Chamados
+
+- Os chamados recentes aparecem na sidebar direita da interface
+- Clique em "Ver Quadro no Trello" no header para acessar o board completo
+- Use o botão de refresh (🔄) para atualizar a lista de chamados
+
+## API
+
+A aplicação expõe uma API REST para integração com outros sistemas.
+
+### Base URL
+```
+http://localhost:8000/api
+```
+
+### Endpoints
+
+#### 1. Criar Chamado
+
+**POST** `/api/chamados`
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+```
+
+**Body (Form Data):**
+```
+tipo_suporte: string (required) - Bug|Melhoria|Duvida/Operacao|Acesso/Permissao|Infra/DevOps
+titulo: string (required, 5-120 chars)
+descricao: string (required, min 10 chars)
+solicitante_nome: string (required)
+solicitante_email: email (required)
+prioridade: string (required) - Baixa|Media|Alta
+sistema_afetado: string (optional)
+ambiente: string (optional) - Producao|Homologacao|Dev
+anexos[]: file[] (optional, max 3 files, 10MB each)
+```
+
+**Exemplo com cURL:**
+```bash
+curl -X POST http://localhost:8000/api/chamados \
+  -F "tipo_suporte=Bug" \
+  -F "titulo=Erro ao fazer login" \
+  -F "descricao=Usuário não consegue fazer login no sistema principal" \
+  -F "solicitante_nome=João Silva" \
+  -F "solicitante_email=joao@example.com" \
+  -F "prioridade=Alta" \
+  -F "sistema_afetado=Portal" \
+  -F "ambiente=Producao" \
+  -F "anexos[]=@/path/to/screenshot.png"
+```
+
+**Resposta de Sucesso (201):**
+```json
+{
+  "success": true,
+  "chamado_id": "63f1234567890abcdef12345",
+  "trello_url": "https://trello.com/c/abc123/1-erro-ao-fazer-login",
+  "message": "Chamado criado com sucesso!"
+}
+```
+
+**Resposta de Erro (422):**
+```json
+{
+  "success": false,
+  "message": "Erro de validação. Verifique os dados enviados.",
+  "errors": {
+    "titulo": "O título do chamado é obrigatório.",
+    "prioridade": "A prioridade é obrigatória."
+  }
+}
+```
+
+#### 2. Listar Chamados
+
+**GET** `/api/chamados`
+
+**Resposta de Sucesso (200):**
+```json
+{
+  "success": true,
+  "chamados": {
+    "Aberto": [
+      {
+        "id": "63f1234567890abcdef12345",
+        "name": "Erro ao fazer login",
+        "desc": "**Solicitante:** João Silva (joao@example.com)...",
+        "url": "https://trello.com/c/abc123/...",
+        "labels": [
+          {"id": "...", "name": "Bug", "color": "red"}
+        ]
+      }
+    ],
+    "Em Execução": [],
+    "Finalizado": []
+  },
+  "trello_board_url": "https://trello.com/b/aK13oEKO/..."
+}
+```
+
+#### 3. Informações da API
+
+**GET** `/api/info`
+
+**Resposta (200):**
+```json
+{
+  "nome": "Mini Service Desk API",
+  "versao": "1.0.0",
+  "trello_board": "https://trello.com/b/aK13oEKO/...",
+  "endpoints": {
+    "criar_chamado": {
+      "metodo": "POST",
+      "url": "/api/chamados",
+      "descricao": "Criar um novo chamado"
+    },
+    "listar_chamados": {
+      "metodo": "GET",
+      "url": "/api/chamados",
+      "descricao": "Listar todos os chamados"
+    }
+  }
+}
+```
+
+### Rate Limiting
+
+- **Limite:** 10 requisições por minuto por IP
+- **Endpoint protegido:** POST `/api/chamados`
+- **Resposta ao exceder (429):**
+```json
+{
+  "message": "Too Many Attempts."
+}
+```
+
+## Estrutura do Projeto
+
+```
+.
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── TicketController.php          # Controller principal
+│   │   └── Requests/
+│   │       └── CreateTicketRequest.php         # Validações do formulário
+│   └── Services/
+│       └── TrelloService.php                   # Integração com Trello API
+├── config/
+│   └── services.php                            # Configurações do Trello
+├── docker/
+│   ├── php/
+│   │   └── Dockerfile                          # Imagem PHP customizada
+│   └── entrypoint.sh                           # Script de inicialização
+├── resources/
+│   └── views/
+│       └── app.blade.php                       # Frontend SPA
+├── routes/
+│   ├── api.php                                 # Rotas da API
+│   └── web.php                                 # Rotas web
+├── tests/
+│   ├── Feature/                                # Testes de integração
+│   └── Unit/                                   # Testes unitários
+├── .env.example                                # Configurações de exemplo
+├── docker-compose.yml                          # Orquestração Docker
+└── README.md                                   # Este arquivo
+```
+
+## Decisões Técnicas
+
+### 1. SQLite vs MySQL/PostgreSQL
+**Escolha:** SQLite
+**Motivo:** O projeto não necessita persistência de dados, pois o Trello é a fonte da verdade. SQLite simplifica o setup do Docker e reduz a complexidade da infraestrutura.
+
+### 2. Storage Local vs S3
+**Escolha:** Storage Local
+**Motivo:** Para o MVP, armazenar temporariamente os arquivos antes de enviar ao Trello é suficiente. Migração futura para S3 é simples se necessário.
+
+### 3. Alpine.js vs React/Vue
+**Escolha:** Alpine.js
+**Motivo:** A aplicação consiste em uma única tela com interatividade moderada. Alpine.js oferece reatividade suficiente sem a complexidade de build tools e configuração de frameworks maiores.
+
+### 4. Container Único vs Múltiplos
+**Escolha:** Container único
+**Motivo:** SQLite não precisa de container separado, simplificando o setup. Para uma aplicação MVP, um container é suficiente e facilita deployment.
+
+### 5. Sem Autenticação
+**Escolha:** Sem sistema de login
+**Motivo:** Conforme requisito, é uma aplicação de uso interno. Rate limiting previne abuso básico. Autenticação pode ser adicionada futuramente.
+
+### 6. Labels Automáticas
+**Escolha:** Criar labels automaticamente se não existirem
+**Motivo:** Facilita o setup inicial e garante consistência visual no Trello. Labels são criadas com cores específicas por tipo e prioridade.
+
+### Trade-offs
+
+| Decisão | Vantagem | Desvantagem |
+|---------|----------|-------------|
+| SQLite | Setup simples, sem container extra | Não escala para múltiplas instâncias |
+| Storage local | Implementação rápida | Não funciona em ambientes distribuídos |
+| Sem autenticação | UX mais simples | Menos seguro para acesso externo |
+| Alpine.js | Bundle pequeno, aprendizado rápido | Menos recursos que React/Vue |
+
+## Testes
+
+### Executar Testes
+
+```bash
+# Dentro do container
+docker exec mini-service-desk php artisan test
+
+# Ou via docker-compose
+docker-compose exec app php artisan test
+```
+
+### Cobertura de Testes
+
+- ✅ Testes unitários do TrelloService
+- ✅ Testes de feature das APIs
+- ✅ Validação de formulários
+- ✅ Upload de arquivos
+
+## Troubleshooting
+
+### O container não inicia
+
+```bash
+# Verificar logs
+docker-compose logs app
+
+# Rebuild completo
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### Erro de permissão no storage
+
+```bash
+docker exec mini-service-desk chmod -R 777 storage bootstrap/cache
+```
+
+### Erro ao conectar com Trello
+
+1. Verifique se as credenciais estão corretas no `.env`
+2. Confirme que o Board ID está correto
+3. Teste as credenciais manualmente:
+```bash
+curl "https://api.trello.com/1/boards/SEU_BOARD_ID?key=SUA_KEY&token=SEU_TOKEN"
+```
+
+### Labels não aparecem no Trello
+
+As labels são criadas automaticamente. Se não aparecem:
+1. Verifique as permissões do token no Trello
+2. Crie as labels manualmente no board com as seguintes cores:
+   - **Bug:** Red
+   - **Melhoria:** Green
+   - **Dúvida/Operação:** Blue
+   - **Acesso/Permissão:** Purple
+   - **Infra/DevOps:** Orange
+   - **Alta:** Red
+   - **Média:** Yellow
+   - **Baixa:** Green
+
+### Port 8000 já está em uso
+
+Altere a porta no `docker-compose.yml`:
+```yaml
+ports:
+  - "8080:8000"  # Use 8080 ao invés de 8000
+```
+
+### Logs da Aplicação
+
+```bash
+# Ver logs em tempo real
+docker-compose logs -f app
+
+# Ver logs do Laravel
+docker exec mini-service-desk tail -f storage/logs/laravel.log
+```
+
+## Próximos Passos (Pós-MVP)
+
+- [ ] Autenticação via OAuth (Google/Microsoft)
+- [ ] Dashboard de métricas e relatórios
+- [ ] Notificações por e-mail
+- [ ] Webhooks do Trello para atualizações em tempo real
+- [ ] Sistema de comentários
+- [ ] Export para PDF/Excel
+- [ ] API de busca avançada
+- [ ] Integração com Slack/Discord
+- [ ] Multi-tenancy (múltiplos boards)
+- [ ] Deploy em cloud (AWS/Heroku/DigitalOcean)
+
+## Suporte
+
+Para problemas ou dúvidas, abra uma issue no repositório.
+
+---
+
+**Desenvolvido com Laravel + Trello API**
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
