@@ -119,6 +119,9 @@ O comando acima irá:
 - Construir a imagem Docker com PHP 8.3 e todas as extensões necessárias
 - Instalar o Laravel e todas as dependências
 - Configurar o ambiente automaticamente
+- Criar o banco de dados SQLite
+- Executar as migrations automaticamente
+- Criar links simbólicos para o storage
 - Iniciar o servidor na porta 8000
 
 ### 5. Acessar a Aplicação
