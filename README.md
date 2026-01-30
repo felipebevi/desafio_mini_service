@@ -177,18 +177,29 @@ ambiente: string (optional) - Producao|Homologacao|Dev
 anexos[]: file[] (optional, max 3 files, 10MB each)
 ```
 
-**Exemplo com cURL:**
+**Exemplo com cURL (Testado e Funcional):**
 ```bash
 curl -X POST http://localhost:8000/api/chamados \
   -F "tipo_suporte=Bug" \
-  -F "titulo=Erro ao fazer login" \
-  -F "descricao=Usuário não consegue fazer login no sistema principal" \
-  -F "solicitante_nome=João Silva" \
-  -F "solicitante_email=joao@example.com" \
+  -F "titulo=Teste de integração com Trello" \
+  -F "descricao=Este é um teste para verificar se a integração está funcionando corretamente" \
+  -F "solicitante_nome=Felipe Bevi" \
+  -F "solicitante_email=felipe@felipebevi.com.br" \
   -F "prioridade=Alta" \
-  -F "sistema_afetado=Portal" \
-  -F "ambiente=Producao" \
-  -F "anexos[]=@/path/to/screenshot.png"
+  -F "sistema_afetado=Sistema de Testes" \
+  -F "ambiente=Homologacao"
+```
+
+**Exemplo com anexo:**
+```bash
+curl -X POST http://localhost:8000/api/chamados \
+  -F "tipo_suporte=Melhoria" \
+  -F "titulo=Chamado com anexo" \
+  -F "descricao=Teste de upload de arquivo anexo" \
+  -F "solicitante_nome=Seu Nome" \
+  -F "solicitante_email=seu@email.com" \
+  -F "prioridade=Media" \
+  -F "anexos[]=@/caminho/para/arquivo.png"
 ```
 
 **Resposta de Sucesso (201):**
